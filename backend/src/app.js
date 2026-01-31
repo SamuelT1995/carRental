@@ -1,26 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const db = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const carRoutes = require("./routes/carRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Basic test route to verify DB connection
-app.get("/test-db", async (req, res) => {
-  try {
-    const result = await db.query("SELECT NOW()");
-    res.json({ message: "Database connected!", time: result.rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database connection failed" });
-  }
-});
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/cars", carRoutes);
+app.use("/api/bookings", bookingRoutes);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

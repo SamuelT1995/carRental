@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
+  bool _isLoading = false;
+
+  void _handleSignup() async {
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final result = await ApiService.signup(
+      _nameController.text,
+      _emailController.text,
+      _passController.text,
+    );
+    setState(() => _isLoading = false);
+
+    if (result != null && mounted) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Signup Failed. Email might be taken.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,75 +47,74 @@ class SignupScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "CREATE\nACCOUNT",
+              'CREATE\nACCOUNT.',
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 48,
                 fontWeight: FontWeight.bold,
+                height: 1.0,
                 letterSpacing: -2,
-                height: 1,
               ),
             ),
-            const SizedBox(height: 50),
-            _inputField("FULL NAME"),
-            const SizedBox(height: 25),
-            _inputField("EMAIL"),
-            const SizedBox(height: 25),
-            _inputField("PASSWORD", obscure: true),
-            const SizedBox(height: 50),
-
-            // SIGNUP BUTTON - NOW FUNCTIONAL
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
+            const SizedBox(height: 48),
+            _buildField(_nameController, 'FULL NAME'),
+            _buildField(_emailController, 'EMAIL'),
+            _buildField(_passController, 'PASSWORD', isPass: true),
+            const SizedBox(height: 48),
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.black),
+                  )
+                : SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _handleSignup,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Text(
+                        'SIGN UP',
+                        style: TextStyle(color: Colors.white, letterSpacing: 2),
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "CREATE ACCOUNT",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _inputField(String label, {bool obscure = false}) {
-    return TextField(
-      obscureText: obscure,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          fontSize: 10,
-          letterSpacing: 2,
-          color: Colors.grey,
-        ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black12),
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+  Widget _buildField(
+    TextEditingController controller,
+    String label, {
+    bool isPass = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: TextField(
+        controller: controller,
+        obscureText: isPass,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(
+            fontSize: 10,
+            letterSpacing: 2,
+            color: Colors.black54,
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+          ),
         ),
       ),
     );

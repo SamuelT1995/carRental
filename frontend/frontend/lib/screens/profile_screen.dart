@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/bottom_nav.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  // NEW LOGOUT FUNCTION: Wipes the memory clean
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // This deletes the userId so we can start fresh
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +49,10 @@ class ProfileScreen extends StatelessWidget {
               _profileLink('Driving License'),
               _profileLink('Privacy Policy'),
               const SizedBox(height: 48),
+
+              // UPDATED LOGOUT BUTTON
               TextButton(
-                onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/login',
-                  (route) => false,
-                ),
+                onPressed: () => _logout(context),
                 child: const Text(
                   'LOGOUT',
                   style: TextStyle(

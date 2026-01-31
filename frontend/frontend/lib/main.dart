@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart';
+import 'package:frontend/screens/my_bookings_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/car_listing_screen.dart';
+import 'screens/car_listings_screen.dart';
 import 'screens/car_detail_screen.dart';
-import 'screens/booking_screen.dart';
-import 'screens/booking_success_screen.dart';
-import 'screens/my_bookings_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/payment_screen.dart';
+import 'screens/confirmation_screen.dart';
 
-void main() => runApp(const CarRentalApp());
+void main() {
+  runApp(const LuxeDriveApp());
+}
 
-class CarRentalApp extends StatelessWidget {
-  const CarRentalApp({super.key});
+class LuxeDriveApp extends StatelessWidget {
+  const LuxeDriveApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      title: 'Luxe Drive',
+      theme: ThemeData(primaryColor: Colors.black, fontFamily: 'Inter'),
+      initialRoute: '/login', // Set to login as default
+
       routes: {
-        '/': (context) => const SplashScreen(),
+        '/': (context) => const LoginScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
         '/home': (context) => const HomeScreen(),
-        '/listing': (context) => const CarListingScreen(),
+        '/all_listings': (context) => const CarListingsScreen(),
         '/detail': (context) => const CarDetailScreen(),
-        '/booking': (context) => const BookingScreen(),
-        '/success': (context) => const BookingSuccessScreen(),
-        '/my_bookings': (context) => const MyBookingsScreen(),
-        '/profile': (context) => const ProfileScreen(),
+        '/payment': (context) => const PaymentScreen(),
+        '/confirmation': (context) => const ConfirmationScreen(),
+        '/my_bookings': (context) =>
+            const MyBookingsScreen(), // ADD THIS FOR NAV
       },
     );
   }

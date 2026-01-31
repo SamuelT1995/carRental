@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Icon(Icons.directions_car_filled, size: 80, color: Colors.white),
             SizedBox(height: 24),
             Text(
-              'LUXE',
+              'LUx',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,
